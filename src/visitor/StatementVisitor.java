@@ -1,5 +1,8 @@
 package visitor;
 
+import java.util.List;
+import java.util.Map;
+
 import syntaxtree.ArrayAssignmentStatement;
 import syntaxtree.AssignmentStatement;
 import syntaxtree.IfStatement;
@@ -8,6 +11,30 @@ import syntaxtree.WhileStatement;
 
 public class StatementVisitor extends GJDepthFirst<Boolean, Integer> 
 {
+	String currentClass;
+	Map<String, String> symbolTable;
+	Map<String, MJClass> classes;
+	ExpressionVisitor expressionVisitor;
+	
+	/**
+	 * @param currentClass
+	 * @param symbolTable
+	 * @param classes
+	 * @param parameters
+	 * @param expressionVisitor
+	 */
+	public StatementVisitor(String currentClass,
+			Map<String, String> symbolTable, 
+			Map<String, MJClass> classes,
+			List<Map<String, String>> parameters,
+			ExpressionVisitor expressionVisitor) {
+		super();
+		this.currentClass = currentClass;
+		this.symbolTable = symbolTable;
+		this.classes = classes;
+		this.expressionVisitor = new ExpressionVisitor(this.classes, this.symbolTable, this.currentClass);
+	}
+
 	/**
 	* f0 -> Identifier()
 	* f1 -> "="
@@ -17,10 +44,14 @@ public class StatementVisitor extends GJDepthFirst<Boolean, Integer>
 	public Boolean visit(AssignmentStatement n, Integer argu) 
 	{
 		Boolean _ret=null;
-	    n.f0.accept(this, argu);
-	    n.f1.accept(this, argu);
-	    n.f2.accept(this, argu);
-	    n.f3.accept(this, argu);
+	    String identifier = n.f0.f0.tokenImage;
+	    String e0 = n.f2.accept(expressionVisitor, argu);
+	    
+	    String type = symbolTable.get(identifier);
+	    if (type != null && type.equals(e0))
+	    {
+	    	_ret = true;
+	    }
 	    return _ret;
 	}
 
@@ -36,13 +67,16 @@ public class StatementVisitor extends GJDepthFirst<Boolean, Integer>
 	public Boolean visit(ArrayAssignmentStatement n, Integer argu) 
 	{
 		Boolean _ret=null;
-	    n.f0.accept(this, argu);
-	    n.f1.accept(this, argu);
-	    n.f2.accept(this, argu);
-	    n.f3.accept(this, argu);
-	    n.f4.accept(this, argu);
-	    n.f5.accept(this, argu);
-	    n.f6.accept(this, argu);
+		String identifier = n.f0.f0.tokenImage;
+		
+	    String e0 = n.f2.accept(expressionVisitor, argu);
+	    String e1 = n.f5.accept(expressionVisitor, argu);
+	    
+	    String type = symbolTable.get(identifier);
+	    if (type.equals("int[]") && e0.equals("int") && e1.equals("int"))
+	    {
+	    	_ret = true;
+	    }
 	    return _ret;
 	}
 
@@ -58,13 +92,12 @@ public class StatementVisitor extends GJDepthFirst<Boolean, Integer>
 	public Boolean visit(IfStatement n, Integer argu) 
 	{
 		Boolean _ret=null;
-	    n.f0.accept(this, argu);
-	    n.f1.accept(this, argu);
-	    n.f2.accept(this, argu);
-	    n.f3.accept(this, argu);
-	    n.f4.accept(this, argu);
-	    n.f5.accept(this, argu);
-	    n.f6.accept(this, argu);
+	    String e0 = n.f2.accept(expressionVisitor, argu);
+	    if (e0.equals("boolean") && n.f4.accept(this, argu) && 
+	    		n.f6.accept(this, argu))
+	    {
+	    	_ret = true;
+	    }
 	    return _ret;
 	}
 
@@ -78,11 +111,11 @@ public class StatementVisitor extends GJDepthFirst<Boolean, Integer>
 	public Boolean visit(WhileStatement n, Integer argu) 
 	{
 		Boolean _ret=null;
-	    n.f0.accept(this, argu);
-	    n.f1.accept(this, argu);
-	    n.f2.accept(this, argu);
-	    n.f3.accept(this, argu);
-	    n.f4.accept(this, argu);
+	    String e0 = n.f2.accept(expressionVisitor, argu);
+	    if (e0.equals("boolean") && n.f4.accept(this, argu))
+	    {
+	    	_ret = true;
+	    }
 	    return _ret;
 	}
 
@@ -96,11 +129,11 @@ public class StatementVisitor extends GJDepthFirst<Boolean, Integer>
 	public Boolean visit(PrintStatement n, Integer argu) 
 	{
 		Boolean _ret=null;
-	    n.f0.accept(this, argu);
-	    n.f1.accept(this, argu);
-	    n.f2.accept(this, argu);
-	    n.f3.accept(this, argu);
-	    n.f4.accept(this, argu);
+	    String e0 = n.f2.accept(expressionVisitor, argu);
+	    if (e0.equals("int"))
+	    {
+	    	_ret = true;
+	    }
 	    return _ret;
 	}
 }
