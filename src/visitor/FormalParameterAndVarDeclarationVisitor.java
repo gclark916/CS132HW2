@@ -8,6 +8,7 @@ import syntaxtree.FormalParameter;
 import syntaxtree.FormalParameterList;
 import syntaxtree.FormalParameterRest;
 import syntaxtree.Identifier;
+import syntaxtree.Type;
 import syntaxtree.VarDeclaration;
 
 public class FormalParameterAndVarDeclarationVisitor extends GJDepthFirst<Map<String, String>, Map<String, String>> {
@@ -42,8 +43,12 @@ public class FormalParameterAndVarDeclarationVisitor extends GJDepthFirst<Map<St
 	public Map<String, String> visit(FormalParameter n, Map<String, String> argu) 
 	{
 		Map<String, String> _ret=null;
+		
 	    n.f0.accept(this, argu);
 	    n.f1.accept(this, argu);
+	    
+	    _ret = typeCheckTypeAndIdentifier(n.f0, n.f1);
+	    
 	    return _ret;
 	}
 
@@ -73,8 +78,21 @@ public class FormalParameterAndVarDeclarationVisitor extends GJDepthFirst<Map<St
 		n.f1.accept(this, argu);
 		n.f2.accept(this, argu);
 		
+		_ret = typeCheckTypeAndIdentifier(n.f0, n.f1);
+		
+		return _ret;
+	}
+	
+	/***
+	 * Makes sure the given type, identifier pair type checks and that the identifier has not been used yet.
+	 * @param typeNode node for the type
+	 * @param identifierNode node for the identifier
+	 * @return the symbolTable class member. null if type error
+	 */
+	private Map<String, String> typeCheckTypeAndIdentifier(Type typeNode, Identifier identifierNode)
+	{
 		String type = null;
-		switch (n.f0.f0.which)
+		switch (typeNode.f0.which)
 		{
 		// ArrayType
 		case 0:
@@ -93,8 +111,7 @@ public class FormalParameterAndVarDeclarationVisitor extends GJDepthFirst<Map<St
 			
 		// Class	
 		case 3:
-			
-			Identifier classNameNode = (Identifier) n.f0.f0.choice;
+			Identifier classNameNode = (Identifier) typeNode.f0.choice;
 			type = classNameNode.f0.tokenImage;
 			if (!classSet.contains(type))
 			{
@@ -104,22 +121,21 @@ public class FormalParameterAndVarDeclarationVisitor extends GJDepthFirst<Map<St
 			break;
 			
 		default:
-			System.err.println("VarDeclaration - Shouldn't get here if parsed tree.");
+			System.err.println("FormalParameterAndVarDeclarationVisitor - Shouldn't get here if parsed tree.");
 		}
 		
-		String identifier = n.f1.f0.tokenImage;
+		String identifier = identifierNode.f0.tokenImage;
 		
-		// Make sure the type is defined and the identifier has not appeared in the VarDeclarations list yet
+		// Make sure the type is defined and the identifier has not appeared in the symbol table yet
 		if (type != null && symbolTable != null && !symbolTable.containsKey(identifier))
 		{
 			symbolTable.put(identifier, type);
-			_ret = symbolTable;
 		}
 		else
 		{
 			symbolTable = null;
 		}
 		
-		return _ret;
+		return symbolTable;
 	}
 }
