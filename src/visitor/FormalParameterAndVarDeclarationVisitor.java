@@ -20,7 +20,7 @@ public class FormalParameterAndVarDeclarationVisitor extends GJDepthFirst<Map<St
 		super();
 		this.symbolTable = new HashMap<String, String>();
 		this.classSet = classSet;
-		this.typeVisitor = new TypeVisitor(classSet);
+		this.typeVisitor = new TypeVisitor(this.classSet);
 	}
 
 	private Map<String, String> symbolTable;

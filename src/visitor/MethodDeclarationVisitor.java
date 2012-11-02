@@ -28,16 +28,26 @@ public class MethodDeclarationVisitor extends GJDepthFirst<Map<String, MJMethod>
 	{
 		Map<String, MJMethod> _ret=null;
 	    n.f0.accept(this, argu);
-	    n.f1.accept(this, argu);
+	    
+	    Set<String> classNames = classes.keySet();
+	    TypeVisitor typeVisitor = new TypeVisitor(classNames);
+	    String declaredReturnType = n.f1.accept(typeVisitor, null);
+	    
 	    n.f2.accept(this, argu);
+	    String methodName = n.f2.f0.tokenImage;
+	    
 	    n.f3.accept(this, argu);
-	    n.f4.accept(this, argu);
+	    
+	    FormalParameterAndVarDeclarationVisitor formalParameterAndVarDeclarationVisitor = new FormalParameterAndVarDeclarationVisitor(classNames);
+	    Map<String, String> formalParameters = n.f4.accept(formalParameterAndVarDeclarationVisitor, null);
+	    
 	    n.f5.accept(this, argu);
 	    n.f6.accept(this, argu);
 	    
-	    Set<String> classNames = classes.keySet();
-	    FormalParameterAndVarDeclarationVisitor varDeclarationVisitor = new FormalParameterAndVarDeclarationVisitor(classNames);
-	    Map<String, String> variables = n.f7.accept(varDeclarationVisitor, null);
+	    // Uses the same visitor as before to ensure there is no overloading of the parameters
+	    // TODO: check whether this distinction is necessary
+	    Map<String, String> variables = n.f7.accept(formalParameterAndVarDeclarationVisitor, null);
+	    
 	    n.f8.accept(this, argu);
 	    n.f9.accept(this, argu);
 	    n.f10.accept(this, argu);
