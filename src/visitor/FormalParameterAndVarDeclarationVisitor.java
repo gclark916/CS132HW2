@@ -11,7 +11,7 @@ import syntaxtree.Identifier;
 import syntaxtree.Type;
 import syntaxtree.VarDeclaration;
 
-public class FormalParameterAndVarDeclarationVisitor extends GJDepthFirst<Map<String, String>, Map<String, String>> {
+public class FormalParameterAndVarDeclarationVisitor extends GJDepthFirst<Map<String, String>, Integer> {
 	
 	/**
 	 * @param classSet Set of names of declared Classes
@@ -31,7 +31,7 @@ public class FormalParameterAndVarDeclarationVisitor extends GJDepthFirst<Map<St
 	* f0 -> FormalParameter()
 	* f1 -> ( FormalParameterRest() )*
 	*/
-	public Map<String, String> visit(FormalParameterList n, Map<String, String> argu) 
+	public Map<String, String> visit(FormalParameterList n, Integer argu) 
 	{
 	    n.f0.accept(this, argu);
 	    n.f1.accept(this, argu);
@@ -42,7 +42,7 @@ public class FormalParameterAndVarDeclarationVisitor extends GJDepthFirst<Map<St
 	* f0 -> Type()
 	* f1 -> Identifier()
 	*/
-	public Map<String, String> visit(FormalParameter n, Map<String, String> argu) 
+	public Map<String, String> visit(FormalParameter n, Integer argu) 
 	{
 		Map<String, String> _ret=null;
 		
@@ -58,7 +58,7 @@ public class FormalParameterAndVarDeclarationVisitor extends GJDepthFirst<Map<St
 	* f0 -> ","
 	* f1 -> FormalParameter()
 	*/
-	public Map<String, String> visit(FormalParameterRest n, Map<String, String> argu)
+	public Map<String, String> visit(FormalParameterRest n, Integer argu)
 	{
 	    n.f0.accept(this, argu);
 	    n.f1.accept(this, argu);
@@ -72,7 +72,7 @@ public class FormalParameterAndVarDeclarationVisitor extends GJDepthFirst<Map<St
 	 * @param argu Map of identifier -> type for any previous VarDeclarations
 	 * @return a Map of identifier -> type of the VarDeclaration list so far. null if type error.
 	 */	
-	public Map<String, String> visit(VarDeclaration n, Map<String, String> argu) 
+	public Map<String, String> visit(VarDeclaration n, Integer argu) 
 	{
 		Map<String, String> _ret = null;
 		

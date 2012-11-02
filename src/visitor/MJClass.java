@@ -6,11 +6,26 @@ import java.util.Map;
 import java.util.Set;
 
 public class MJClass {
-	Map<String, MJMethod> methods;	// Map of method name-> Method. Assumes no overloading of method names.
-	Map<String, String> members;	// Map of member name -> Type name
-	String name;
-	MJClass parentClass;
+	public Map<String, MJMethod> methods;	// Map of method name-> Method. Assumes no overloading of method names.
+	public Map<String, String> fields;	// Map of field name -> Type name
+	public String name;
+	public MJClass parentClass;
 	
+	/**
+	 * @param methods
+	 * @param fields
+	 * @param name
+	 * @param parentClass
+	 */
+	public MJClass(Map<String, MJMethod> methods, Map<String, String> fields,
+			String name, MJClass parentClass) {
+		super();
+		this.methods = methods;
+		this.fields = fields;
+		this.name = name;
+		this.parentClass = parentClass;
+	}
+
 	static Set<String> getClassNames(Set<MJClass> classes)
 	{
 		Set<String> classNames = new HashSet<String>();

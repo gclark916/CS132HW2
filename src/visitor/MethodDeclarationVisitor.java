@@ -1,13 +1,25 @@
 package visitor;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import syntaxtree.MethodDeclaration;
 
-public class MethodDeclarationVisitor extends GJDepthFirst<Map<String, MJMethod>, Integer> 
-{
-	Map<String, MJClass> classes;
+public class MethodDeclarationVisitor extends GJDepthFirst<Map<String, MJMethod>, Integer> {
+	Set<String> classNames;
+	Map<String, MJMethod> methods;
+
+	/**
+	 * @param classNames
+	 * @param methods
+	 */
+	public MethodDeclarationVisitor(Set<String> classNames) 
+	{
+		super();
+		this.classNames = classNames;
+		this.methods = new HashMap<String, MJMethod>();
+	}
 
 	/**
 	* f0 -> "public"
@@ -25,34 +37,26 @@ public class MethodDeclarationVisitor extends GJDepthFirst<Map<String, MJMethod>
 	* f12 -> "}"
 	*/
 	public Map<String, MJMethod> visit(MethodDeclaration n, Integer argu) 
-	{
-		Map<String, MJMethod> _ret=null;
-	    n.f0.accept(this, argu);
-	    
-	    Set<String> classNames = classes.keySet();
+	{	    
 	    TypeVisitor typeVisitor = new TypeVisitor(classNames);
-	    String declaredReturnType = n.f1.accept(typeVisitor, null);
+	    String returnType = n.f1.accept(typeVisitor, null);
 	    
-	    n.f2.accept(this, argu);
 	    String methodName = n.f2.f0.tokenImage;
 	    
-	    n.f3.accept(this, argu);
+	    FormalParameterAndVarDeclarationVisitor formalParameterVisitor = new FormalParameterAndVarDeclarationVisitor(classNames);
+	    Map<String, String> formalParameters = n.f4.accept(formalParameterVisitor, null);
 	    
-	    FormalParameterAndVarDeclarationVisitor formalParameterAndVarDeclarationVisitor = new FormalParameterAndVarDeclarationVisitor(classNames);
-	    Map<String, String> formalParameters = n.f4.accept(formalParameterAndVarDeclarationVisitor, null);
-	    
-	    n.f5.accept(this, argu);
-	    n.f6.accept(this, argu);
-	    
-	    // Uses the same visitor as before to ensure there is no overloading of the parameters
-	    // TODO: check whether this distinction is necessary
-	    Map<String, String> variables = n.f7.accept(formalParameterAndVarDeclarationVisitor, null);
-	    
-	    n.f8.accept(this, argu);
-	    n.f9.accept(this, argu);
-	    n.f10.accept(this, argu);
-	    n.f11.accept(this, argu);
-	    n.f12.accept(this, argu);
-	    return _ret;
+	    // Ensure a method with the same name hasn't already been added
+	    if (methods != null && methods.containsKey(methodName))
+	    {
+	    	methods = null;
+	    }
+	    else
+	    {
+	    	MJMethod method = new MJMethod(methodName, formalParameters, returnType);
+	    	methods.put(methodName, method);
+	    }
+
+	    return methods;
 	}
 }
