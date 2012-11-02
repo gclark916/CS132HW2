@@ -191,7 +191,7 @@ public class ExpressionVisitor extends GJDepthFirst<String, Object>
 	    	MJClass mjclass = classes.get(e0);
 	    	if (mjclass != null)
 	    	{
-		    	MJMethod method = mjclass.methods.get(methodName);
+		    	MJMethod method = mjclass.getMethods().get(methodName);
 		    	
 		    	if (method != null)
 		    	{

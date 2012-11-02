@@ -1,6 +1,5 @@
 package visitor;
 
-import java.util.List;
 import java.util.Map;
 
 import syntaxtree.ArrayAssignmentStatement;
@@ -25,9 +24,8 @@ public class StatementVisitor extends GJDepthFirst<Boolean, Integer>
 	 */
 	public StatementVisitor(String currentClass,
 			Map<String, String> symbolTable, 
-			Map<String, MJClass> classes,
-			List<Map<String, String>> parameters,
-			ExpressionVisitor expressionVisitor) {
+			Map<String, MJClass> classes) 
+	{
 		super();
 		this.currentClass = currentClass;
 		this.symbolTable = symbolTable;

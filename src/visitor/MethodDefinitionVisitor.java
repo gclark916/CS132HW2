@@ -1,13 +1,29 @@
 package visitor;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import syntaxtree.MethodDeclaration;
 
-public class MethodDefinitionVisitor extends GJDepthFirst<Map<String, MJMethod>, Integer> 
+public class MethodDefinitionVisitor extends GJDepthFirst<Boolean, Integer> 
 {
 	Map<String, MJClass> classes;
+	Map<String, String> symbolTable;	// Originally contains just the Class's fields
+	String currentClass;
+
+	/**
+	 * @param classes
+	 * @param symbolTable
+	 * @param currentClass
+	 */
+	public MethodDefinitionVisitor(Map<String, MJClass> classes,
+			Map<String, String> symbolTable, String currentClass) {
+		super();
+		this.classes = classes;
+		this.symbolTable = symbolTable;
+		this.currentClass = currentClass;
+	}
 
 	/**
 	* f0 -> "public"
@@ -24,32 +40,43 @@ public class MethodDefinitionVisitor extends GJDepthFirst<Map<String, MJMethod>,
 	* f11 -> ";"
 	* f12 -> "}"
 	*/
-	public Map<String, MJMethod> visit(MethodDeclaration n, Integer argu) 
+	public Boolean visit(MethodDeclaration n, Integer argu) 
 	{
-		Map<String, MJMethod> _ret=null;
+		Boolean _ret = null;
 	    
 	    Set<String> classNames = classes.keySet();
 	    TypeVisitor typeVisitor = new TypeVisitor(classNames);
-	    String declaredReturnType = n.f1.accept(typeVisitor, null);
-	    
-	    String methodName = n.f2.f0.tokenImage;
+	    String returnType = n.f1.accept(typeVisitor, null);
 	    
 	    // Use different visitors for parameters and variables because variables' 
 	    // type environment can override parameters' type environment
-	    VarDeclarationVisitor formalParameterVisitor = new VarDeclarationVisitor(classNames);
-	    Map<String, String> formalParameters = n.f4.accept(formalParameterVisitor, null);
+	    FormalParameterVisitor formalParameterVisitor = new FormalParameterVisitor(classNames);
+	    List<Map<String, String>> formalParameters = formalParameterVisitor.visit(n.f4, argu);
 	    
-	    // Uses the same visitor as before to ensure there is no overloading of the parameters
-	    // TODO: check whether this distinction is necessary
 	    VarDeclarationVisitor varDeclarationVisitor = new VarDeclarationVisitor(classNames);
-	    Map<String, String> variables = n.f7.accept(varDeclarationVisitor, null);
+	    Map<String, String> variables = varDeclarationVisitor.visit(n.f7, argu);
 	    
-	    // Variables override parameters
-	    formalParameters.putAll(variables);
+	    // parameters overshadow Class fields
+	    int parameterCount = formalParameters.size();
+	    for (int parameterIndex = 0; parameterIndex < parameterCount; parameterIndex++)
+	    {
+	    	Map<String, String> parameter = formalParameters.get(parameterIndex);
+	    	symbolTable.putAll(parameter);
+	    }
 	    
-	    //TODO: statements and return
-	    n.f8.accept(this, argu);
-	    n.f10.accept(this, argu);
+	    // local variables overshadow parameters
+	    symbolTable.putAll(variables);
+	    
+	    StatementVisitor statementVisitor = new StatementVisitor(currentClass, symbolTable, classes);
+	    if (statementVisitor.visit(n.f8, argu))
+	    {
+	    	ExpressionVisitor expressionVisitor = new ExpressionVisitor(classes, symbolTable, currentClass);
+	    	String e0 = expressionVisitor.visit(n.f10, argu);
+	    	if (e0.equals(returnType))
+	    	{
+	    		_ret = true;
+	    	}
+	    }
 	    return _ret;
 	}
 }

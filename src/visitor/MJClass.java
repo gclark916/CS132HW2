@@ -22,7 +22,15 @@ public class MJClass {
 			String name, MJClass parentClass) {
 		super();
 		this.methods = methods;
+		if (this.methods == null)
+		{
+			this.methods = new HashMap<String, MJMethod>();
+		}
 		this.fields = fields;
+		if (this.fields == null)
+		{
+			this.fields = new HashMap<String, String>();
+		}
 		this.name = name;
 		this.parentClass = parentClass;
 	}

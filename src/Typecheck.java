@@ -64,7 +64,7 @@ public class Typecheck {
 			}
 			
 			// Third pass check all method bodies(parameters, variables, statements, expressions, return type)
-			VarDeclarationVisitor visitor = new VarDeclarationVisitor(null);
+			ThirdPassVisitor visitor = new ThirdPassVisitor(classes);
 			root.accept(visitor, null);
 		}
 		catch (ParseException e) 
