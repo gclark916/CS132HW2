@@ -20,10 +20,12 @@ public class FormalParameterAndVarDeclarationVisitor extends GJDepthFirst<Map<St
 		super();
 		this.symbolTable = new HashMap<String, String>();
 		this.classSet = classSet;
+		this.typeVisitor = new TypeVisitor(classSet);
 	}
 
 	private Map<String, String> symbolTable;
 	private Set<String> classSet;
+	private TypeVisitor typeVisitor;
 	
 	/**
 	* f0 -> FormalParameter()
@@ -91,38 +93,7 @@ public class FormalParameterAndVarDeclarationVisitor extends GJDepthFirst<Map<St
 	 */
 	private Map<String, String> typeCheckTypeAndIdentifier(Type typeNode, Identifier identifierNode)
 	{
-		String type = null;
-		switch (typeNode.f0.which)
-		{
-		// ArrayType
-		case 0:
-			type = "int[]";
-			break;
-			
-		// BooleanType	
-		case 1:
-			type = "boolean";
-			break;
-			
-		// IntegerType	
-		case 2:
-			type = "int";
-			break;
-			
-		// Class	
-		case 3:
-			Identifier classNameNode = (Identifier) typeNode.f0.choice;
-			type = classNameNode.f0.tokenImage;
-			if (!classSet.contains(type))
-			{
-				System.err.println("Class not found in the given set of class names.");
-				type = null;
-			}
-			break;
-			
-		default:
-			System.err.println("FormalParameterAndVarDeclarationVisitor - Shouldn't get here if parsed tree.");
-		}
+		String type = typeVisitor.visit(typeNode, null);
 		
 		String identifier = identifierNode.f0.tokenImage;
 		
