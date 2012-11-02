@@ -1,5 +1,6 @@
 package visitor;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -24,6 +25,38 @@ public class MJClass {
 		this.fields = fields;
 		this.name = name;
 		this.parentClass = parentClass;
+	}
+
+	public Map<String, MJMethod> getMethods() 
+	{
+		Map<String, MJMethod> completeMethods = new HashMap<String, MJMethod>();
+		
+		if (parentClass != null)
+		{
+			completeMethods.putAll(parentClass.methods);
+			completeMethods.putAll(methods);
+		}
+		else
+		{
+			completeMethods.putAll(methods);
+		}
+		return completeMethods;
+	}
+	
+	public Map<String, String> getFields() 
+	{
+		Map<String, String> completeFields = new HashMap<String, String>();
+		
+		if (parentClass != null)
+		{
+			completeFields.putAll(parentClass.fields);
+			completeFields.putAll(fields);
+		}
+		else
+		{
+			completeFields.putAll(fields);
+		}
+		return completeFields;
 	}
 
 	static Set<String> getClassNames(Set<MJClass> classes)

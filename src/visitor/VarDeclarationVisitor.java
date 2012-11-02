@@ -11,21 +11,22 @@ import syntaxtree.Identifier;
 import syntaxtree.Type;
 import syntaxtree.VarDeclaration;
 
-public class FormalParameterAndVarDeclarationVisitor extends GJDepthFirst<Map<String, String>, Integer> {
+public class VarDeclarationVisitor extends GJDepthFirst<Map<String, String>, Integer> 
+{
+	private Map<String, String> symbolTable;
+	private Set<String> classSet;
+	private TypeVisitor typeVisitor;
 	
 	/**
 	 * @param classSet Set of names of declared Classes
 	 */
-	public FormalParameterAndVarDeclarationVisitor(Set<String> classSet) {
+	public VarDeclarationVisitor(Set<String> classSet) 
+	{
 		super();
 		this.symbolTable = new HashMap<String, String>();
 		this.classSet = classSet;
 		this.typeVisitor = new TypeVisitor(this.classSet);
 	}
-
-	private Map<String, String> symbolTable;
-	private Set<String> classSet;
-	private TypeVisitor typeVisitor;
 	
 	/**
 	* f0 -> FormalParameter()

@@ -1,10 +1,11 @@
 package visitor;
+import java.util.List;
 import java.util.Map;
 
 
 public class MJMethod 
 {
-	Map<String, String> parameterTypes;
+	List<Map<String, String>> parameters;
 	String returnType;
 	String name;
 	
@@ -13,10 +14,10 @@ public class MJMethod
 	 * @param returnType
 	 * @param name
 	 */
-	public MJMethod(String name, Map<String, String> parameterTypes, String returnType)
+	public MJMethod(String name, List<Map<String, String>> parameters, String returnType)
 	{
 		super();
-		this.parameterTypes = parameterTypes;
+		this.parameters = parameters;
 		this.returnType = returnType;
 		this.name = name;
 	}

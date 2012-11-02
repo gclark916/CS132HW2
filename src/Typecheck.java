@@ -64,7 +64,7 @@ public class Typecheck {
 			}
 			
 			// Third pass check all method bodies(parameters, variables, statements, expressions, return type)
-			FormalParameterAndVarDeclarationVisitor visitor = new FormalParameterAndVarDeclarationVisitor(null);
+			VarDeclarationVisitor visitor = new VarDeclarationVisitor(null);
 			root.accept(visitor, null);
 		}
 		catch (ParseException e) 

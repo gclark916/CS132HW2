@@ -78,7 +78,7 @@ public class SecondPassVisitor extends GJDepthFirst<Map<String, MJClass>, Intege
 	{
 		String name = n.f1.f0.tokenImage;
 	    
-	    FormalParameterAndVarDeclarationVisitor fieldsVisitor = new FormalParameterAndVarDeclarationVisitor(classNames);
+	    VarDeclarationVisitor fieldsVisitor = new VarDeclarationVisitor(classNames);
 	    Map<String, String> fields = fieldsVisitor.visit(n.f3, null);
 
 	    MethodDeclarationVisitor methodsVisitor = new MethodDeclarationVisitor(classNames);
@@ -115,7 +115,7 @@ public class SecondPassVisitor extends GJDepthFirst<Map<String, MJClass>, Intege
 	    // TODO: parent is not added
 	    //String parent = n.f3.f0.tokenImage;
 	    
-	    FormalParameterAndVarDeclarationVisitor fieldsVisitor = new FormalParameterAndVarDeclarationVisitor(classNames);
+	    VarDeclarationVisitor fieldsVisitor = new VarDeclarationVisitor(classNames);
 	    Map<String, String> fields = fieldsVisitor.visit(n.f5, null);
 
 	    MethodDeclarationVisitor methodsVisitor = new MethodDeclarationVisitor(classNames);

@@ -1,6 +1,7 @@
 package visitor;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,8 +44,8 @@ public class MethodDeclarationVisitor extends GJDepthFirst<Map<String, MJMethod>
 	    
 	    String methodName = n.f2.f0.tokenImage;
 	    
-	    FormalParameterAndVarDeclarationVisitor formalParameterVisitor = new FormalParameterAndVarDeclarationVisitor(classNames);
-	    Map<String, String> formalParameters = n.f4.accept(formalParameterVisitor, null);
+	    FormalParameterVisitor formalParameterVisitor = new FormalParameterVisitor(classNames);
+	    List<Map<String, String>> formalParameters = n.f4.accept(formalParameterVisitor, null);
 	    
 	    // Ensure a method with the same name hasn't already been added
 	    if (methods != null && methods.containsKey(methodName))
